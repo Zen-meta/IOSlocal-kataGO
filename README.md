@@ -22,8 +22,8 @@ Requirements:
 Clone the repository:
 
 ```sh
-git clone https://github.com/<owner>/<repo>.git
-cd <repo>
+git clone https://github.com/Zen-meta/IOSlocal-kataGO.git
+cd IOSlocal-kataGO
 ```
 
 Open the project:
