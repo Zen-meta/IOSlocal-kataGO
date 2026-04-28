@@ -1,0 +1,4 @@
+module KatagoMobile {
+  header "katago_mobile.h"
+  export *
+}

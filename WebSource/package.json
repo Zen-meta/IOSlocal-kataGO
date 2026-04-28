@@ -1,0 +1,19 @@
+{
+  "name": "katago-sabaki-ios-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@sabaki/go-board": "^1.4.1",
+    "@sabaki/sgf": "^3.4.7",
+    "@sabaki/shudan": "^1.7.1",
+    "preact": "^10.26.9"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-legacy": "^6.0.2",
+    "vite": "^6.4.1"
+  }
+}
+

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Go AI Review</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="titleBlock">
+          <h1>Go AI Review</h1>
+          <p id="status">Ready</p>
+          <div class="modeControls" aria-label="Mode controls">
+            <button id="modeReview" type="button">Review</button>
+            <button id="modeOnline" type="button">Online</button>
+            <button id="modePlay" type="button">Play Game</button>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="newGame" type="button">New</button>
+          <button id="undo" type="button">Undo</button>
+          <button id="passMove" type="button">Pass</button>
+          <button id="resignGame" type="button">Resign</button>
+          <button id="rulesButton" type="button">Rules</button>
+          <button id="playCandidate" type="button">Play</button>
+          <button id="engineToggle" type="button" class="primary">Engine On</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="boardPane">
+          <canvas id="goban" width="1200" height="1200" aria-label="Go board"></canvas>
+        </section>
+
+        <aside class="sidebar">
+          <section>
+            <h2>Game</h2>
+            <dl>
+              <div><dt>Board</dt><dd>19x19</dd></div>
+              <div><dt>Mode</dt><dd id="modeLabel">Review</dd></div>
+              <div>
+                <dt>Human</dt>
+                <dd class="colorSwitch">
+                  <button id="humanBlack" type="button" aria-label="Human plays black">B</button>
+                  <button id="humanWhite" type="button" aria-label="Human plays white">W</button>
+                </dd>
+              </div>
+              <div><dt>Next</dt><dd id="nextColor">Black</dd></div>
+              <div><dt>Moves</dt><dd id="moveCount">0</dd></div>
+              <div><dt>Captures</dt><dd><span id="blackCaptures">B 0</span> / <span id="whiteCaptures">W 0</span></dd></div>
+            </dl>
+          </section>
+
+          <section>
+            <h2>Model</h2>
+            <dl>
+              <div><dt>Active</dt><dd id="activeModel">Model required</dd></div>
+            </dl>
+            <div class="modelPicker">
+              <select id="modelSelect" aria-label="Model selection"></select>
+              <button id="selectModel" type="button">Select</button>
+            </div>
+            <ol id="modelList" class="modelList"></ol>
+            <div id="modelProgress" class="modelProgress" hidden>
+              <div class="progressMeta"><span id="modelProgressName">Model</span><span id="modelProgressText">0%</span></div>
+              <div class="progressBar"><div id="modelProgressFill" class="progressFill"></div></div>
+            </div>
+            <div class="inlineActions">
+              <button id="openModelSite" type="button">Model Site</button>
+              <button id="importModel" type="button">Import</button>
+              <button id="refreshModels" type="button">Refresh</button>
+            </div>
+          </section>
+
+          <section>
+            <h2>Engine</h2>
+            <dl>
+              <div>
+                <dt>Preset</dt>
+                <dd class="enginePreset">
+                  <button id="engineFast" type="button">Fast</button>
+                  <button id="engineBalanced" type="button">Balanced</button>
+                  <button id="engineStrong" type="button">Strong</button>
+                </dd>
+              </div>
+              <div><dt>Accel</dt><dd id="engineAcceleratorMode">Metal</dd></div>
+              <div>
+                <dt>Visits</dt>
+                <dd>
+                  <input id="engineVisits" type="number" inputmode="numeric" min="4" max="1000000" step="1" list="engineVisitsPresets" placeholder="Auto" aria-label="Analysis visits" />
+                  <datalist id="engineVisitsPresets"></datalist>
+                </dd>
+              </div>
+              <div><dt>Time</dt><dd><select id="engineTime" aria-label="Analysis time limit"></select></dd></div>
+              <div><dt>Threads</dt><dd><select id="engineThreads" aria-label="Search threads"></select></dd></div>
+              <div><dt>Batch</dt><dd><select id="engineBatch" aria-label="Neural net batch size"></select></dd></div>
+              <div><dt>Cache</dt><dd><select id="engineCache" aria-label="Neural net cache size"></select></dd></div>
+              <div><dt>Profile</dt><dd id="engineProfile">-</dd></div>
+              <div><dt>Current</dt><dd id="engineCurrent">-</dd></div>
+              <div><dt>Hardware</dt><dd id="engineHardware">-</dd></div>
+              <div><dt>Accelerator</dt><dd id="engineAccelerator">-</dd></div>
+              <div><dt>Warning</dt><dd id="engineWarning" class="engineWarning">-</dd></div>
+            </dl>
+          </section>
+
+          <section>
+            <h2>Analysis</h2>
+            <ol id="analysisList" class="analysisList"></ol>
+          </section>
+
+          <section>
+            <h2>Variation</h2>
+            <div id="variationLine" class="variationLine">Select a candidate</div>
+          </section>
+
+          <section>
+            <h2>Winrate</h2>
+            <canvas id="winrateGraph" class="winrateGraph" width="560" height="180"></canvas>
+          </section>
+
+          <section>
+            <h2>Game Tree</h2>
+            <ol id="gameTree" class="gameTree"></ol>
+          </section>
+
+          <section>
+            <h2>SGF</h2>
+            <textarea id="sgfText" spellcheck="false"></textarea>
+            <div class="inlineActions">
+              <button id="exportSgf" type="button">Export</button>
+              <button id="loadSgf" type="button">Load</button>
+            </div>
+          </section>
+
+          <section>
+            <h2>Legal</h2>
+            <div class="inlineActions">
+              <button id="showLicenses" type="button">Licenses</button>
+            </div>
+          </section>
+        </aside>
+      </main>
+
+      <div id="modalBackdrop" class="modalBackdrop" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+          <div class="modalHeader">
+            <h2 id="modalTitle">Licenses</h2>
+            <button id="modalClose" type="button" aria-label="Close">Close</button>
+          </div>
+          <div id="modalBody" class="modalBody"></div>
+          <div id="modalActions" class="inlineActions modalActions"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
